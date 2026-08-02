@@ -3,3 +3,7 @@ dist/
 out-tsc/
 .angular/
 *.log
+
+# Non specifico di questo progetto (tooling generale) — tenuto in docs/
+# solo per comodità locale, non fa parte della repo.
+docs/manuale-npx.pdf
