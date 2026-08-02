@@ -14,7 +14,9 @@ percorso (dettagli in [`docs/`](#documentazione-approfondita)).
 - Nuovo control flow nei template (`@if`, `@for`, `@empty`, `@else`)
 - `httpResource()` per il data fetching dichiarativo
 - Signal Forms (`form()`, `[formField]`, validatori `required`/`minLength`)
-- Guard di routing funzionali (`CanActivateFn` + `inject()`)
+- Router in profondità: lazy loading (`loadComponent`), preloading
+  (`withPreloading`), guard funzionali sia in ingresso (`CanActivateFn`)
+  sia in uscita (`CanDeactivateFn`, unsaved-changes su `/new`)
 - Dependency injection gerarchica per evitare il prop drilling
   (`TaskStore`, vedi `src/app/core/task-store.ts`)
 - View Encapsulation (`Emulated` di default qui, `ShadowDom` reale sul
@@ -56,7 +58,8 @@ src/app/
     task.model.ts              Tipi TypeScript condivisi
     task-store.ts               Stato condiviso via DI (il "Pinia" di Angular)
     auth.service.ts             Stato di login (finto) per il guard
-    auth-guard.ts                Guard funzionale che protegge /new
+    auth-guard.ts                Guard funzionale che protegge /new (CanActivateFn)
+    can-deactivate.guard.ts      Guard funzionale in uscita da /new (CanDeactivateFn)
 
   features/
     task-list/                  Lista task: httpResource() + TaskStore
@@ -88,6 +91,11 @@ docs/                          Manuali di approfondimento (vedi sotto)
    dimostrare che `switchMap` scarta le risposte tardive invece di
    lasciarle sovrascrivere il risultato corrente. Prova anche a digitare
    `error` per vedere la gestione (recuperabile) di un fallimento.
+7. Vai su "Nuovo task", scrivi un titolo ma **non inviare il form**, poi
+   prova a cliccare un link per uscire dalla pagina: il guard
+   `CanDeactivateFn` intercetta la navigazione e chiede conferma prima di
+   perdere il titolo non salvato (annulla e riprova per vedere che
+   l'invio regolare del form, invece, non chiede nulla).
 
 ## Il branch `shadow-dom-encapsulation`
 
@@ -152,6 +160,12 @@ generati durante la costruzione di questo progetto:
   ogni operatore usato in `task-search.ts` spiegato con demo dal vivo
   (incluso un race condition riprodotto a comando e una trappola su
   `catchError`), cheat sheet finale.
+- **`manuale-router.pdf`** — approfondimento sul Router: lazy loading
+  (`loadComponent` e verifica dei chunk generati dalla build), preloading
+  strategies, l'intera famiglia di guard (`CanActivate`, `CanDeactivate`,
+  `CanActivateChild`, `CanMatch`) con demo dal vivo del guard in uscita
+  su `/new`, resolver e rotte annidate spiegati anche nei casi in cui
+  *non* hanno un uso reale in questo progetto, cheat sheet finale.
 
 ## Cheat-sheet rapida
 
@@ -162,5 +176,6 @@ generati durante la costruzione di questo progetto:
 | `task-list.ts` | `httpResource()` | composable custom / TanStack Query |
 | `task-form.ts` | Signal Forms | `v-model` + VeeValidate |
 | `auth-guard.ts` | `CanActivateFn` | `beforeEnter` in Vue Router |
+| `can-deactivate.guard.ts` | `CanDeactivateFn` | `onBeforeRouteLeave`/`beforeRouteLeave` |
 | `task-search.ts` | RxJS + `toObservable()`/`toSignal()` | composable con debounce manuale |
 | `*.html` con `@if`/`@for` | nuovo control flow | `v-if`/`v-for` |
