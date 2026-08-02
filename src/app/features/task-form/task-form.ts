@@ -11,7 +11,7 @@
 // Il parallelo con Vue: è concettualmente vicino a v-model + una
 // libreria di validazione come VeeValidate, ma integrato nativamente
 // nel framework invece che essere una libreria a parte.
-import { Component, inject, signal } from '@angular/core';
+import { Component, ViewEncapsulation, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
 // required/minLength sono validatori built-in — Angular ne offre un set
 // pronto all'uso (required, minLength, maxLength, min, max, pattern,
@@ -24,6 +24,7 @@ import { Router } from '@angular/router';
 // esporre gli errori) resta a carico del framework, non tua.
 import { form, FormField, required, minLength } from '@angular/forms/signals';
 import { TaskStore } from '../../core/task-store';
+import { sharedStyles } from '../../design-system/shared.styles';
 
 interface NewTaskModel {
   title: string;
@@ -33,6 +34,42 @@ interface NewTaskModel {
   selector: 'app-task-form',
   imports: [FormField],
   templateUrl: './task-form.html',
+  encapsulation: ViewEncapsulation.ShadowDom,
+  styles: [
+    sharedStyles,
+    `
+      .form {
+        margin: 1rem 0 0;
+        max-width: var(--ds-container-sm);
+      }
+      .field label {
+        display: block;
+        font-size: var(--ds-text-sm);
+        font-weight: var(--ds-font-medium);
+        color: var(--ds-color-text-body);
+      }
+      .field input[type='text'] {
+        box-sizing: border-box;
+        margin-top: 0.25rem;
+        display: block;
+        width: 100%;
+        border-radius: var(--ds-radius-md);
+        border: 1px solid var(--ds-color-border-strong);
+        padding: 0.5rem 0.75rem;
+        font-size: var(--ds-text-sm);
+        box-shadow: var(--ds-shadow-sm);
+        font-family: inherit;
+      }
+      .field input[type='text']:focus {
+        outline: none;
+        border-color: var(--ds-color-accent-focus);
+        box-shadow: 0 0 0 1px var(--ds-color-accent-focus);
+      }
+      .form .btn {
+        margin-top: 1rem;
+      }
+    `,
+  ],
 })
 export class TaskForm {
   private readonly store = inject(TaskStore);

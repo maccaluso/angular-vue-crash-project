@@ -72,8 +72,12 @@ describe('TaskList (httpResource + TaskStore condiviso)', () => {
     expect(store.totalCount()).toBe(2);
     expect(store.completedCount()).toBe(1);
 
-    // E il template deve aver renderizzato due <app-task-item>.
-    const items = fixture.nativeElement.querySelectorAll('app-task-item');
+    // E il template deve aver renderizzato due <app-task-item>. Basta un
+    // solo salto in .shadowRoot: qui cerchiamo i TAG <app-task-item>
+    // dentro lo shadow root DI TaskList, non dentro quello (separato) di
+    // ciascun TaskItem — per contare quanti elementi sono stati creati
+    // non serve entrare nel loro shadow root individuale.
+    const items = fixture.nativeElement.shadowRoot!.querySelectorAll('app-task-item');
     expect(items.length).toBe(2);
   });
 });

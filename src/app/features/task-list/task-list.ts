@@ -10,16 +10,43 @@
 // JSONPlaceholder non persiste davvero le scritture — in un progetto
 // reale il tuo backend sostituirebbe questa URL e le mutazioni
 // chiamerebbero endpoint veri (POST/PATCH/DELETE).
-import { Component, effect, inject } from '@angular/core';
+import { Component, ViewEncapsulation, effect, inject } from '@angular/core';
 import { httpResource } from '@angular/common/http';
 import { TaskItem } from '../task-item/task-item';
 import { TaskStore } from '../../core/task-store';
 import { RemoteTodo } from '../../core/task.model';
+import { sharedStyles } from '../../design-system/shared.styles';
 
 @Component({
   selector: 'app-task-list',
   imports: [TaskItem],
   templateUrl: './task-list.html',
+  encapsulation: ViewEncapsulation.ShadowDom,
+  styles: [
+    sharedStyles,
+    `
+      .task-list {
+        margin: 1rem 0 0;
+        padding: 0;
+        list-style: none;
+        border-radius: var(--ds-radius-lg);
+        border: 1px solid var(--ds-color-border);
+        background: var(--ds-color-surface);
+        overflow: hidden;
+      }
+      /* Equivalente di divide-y di Tailwind: un bordo TRA gli elementi,
+         non sul primo. */
+      .task-list > li + li {
+        border-top: 1px solid var(--ds-color-border);
+      }
+      .task-list__empty {
+        padding: 1.5rem 1rem;
+        text-align: center;
+        font-size: var(--ds-text-sm);
+        color: var(--ds-color-text-subtle);
+      }
+    `,
+  ],
 })
 export class TaskList {
   protected readonly store = inject(TaskStore);

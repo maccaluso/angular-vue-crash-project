@@ -11,7 +11,7 @@
 // è signal -> toObservable() -> .pipe(operatori RxJS) -> toSignal() ->
 // di nuovo signal, letto dal template. Questa è la ricetta standard 2026
 // per "stato locale in signal, orchestrazione asincrona in RxJS".
-import { Component, signal } from '@angular/core';
+import { Component, ViewEncapsulation, signal } from '@angular/core';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import {
   debounceTime,
@@ -25,6 +25,7 @@ import {
   throwError,
   catchError,
 } from 'rxjs';
+import { sharedStyles } from '../../design-system/shared.styles';
 
 // "Database remoto" finto: un array fisso, così la demo è deterministica
 // e non dipende da una vera rete (a differenza di TaskList, che invece
@@ -54,6 +55,65 @@ interface SearchResult {
 @Component({
   selector: 'app-task-search',
   templateUrl: './task-search.html',
+  // Coerente col resto di questo branch: ShadowDom reale, niente
+  // Tailwind. Le classi qui sotto riusano deliberatamente GLI STESSI
+  // nomi di task-list.ts (.task-list, .task-list__empty) per lo stesso
+  // pattern visivo (lista con card) — nessun conflitto possibile, dato
+  // che vivono in shadow root completamente separati: la duplicazione
+  // di nome non è un problema, è proprio il punto dell'incapsulamento.
+  encapsulation: ViewEncapsulation.ShadowDom,
+  styles: [
+    sharedStyles,
+    `
+      .search-input {
+        box-sizing: border-box;
+        margin-top: 1rem;
+        display: block;
+        width: 100%;
+        max-width: var(--ds-container-sm);
+        border-radius: var(--ds-radius-md);
+        border: 1px solid var(--ds-color-border-strong);
+        padding: 0.5rem 0.75rem;
+        font-size: var(--ds-text-sm);
+        box-shadow: var(--ds-shadow-sm);
+        font-family: inherit;
+      }
+      .search-input:focus {
+        outline: none;
+        border-color: var(--ds-color-accent-focus);
+        box-shadow: 0 0 0 1px var(--ds-color-accent-focus);
+      }
+      .task-list {
+        margin: 1rem 0 0;
+        max-width: var(--ds-container-sm);
+        padding: 0;
+        list-style: none;
+        border-radius: var(--ds-radius-lg);
+        border: 1px solid var(--ds-color-border);
+        background: var(--ds-color-surface);
+        overflow: hidden;
+      }
+      .task-list > li + li {
+        border-top: 1px solid var(--ds-color-border);
+      }
+      .task-list__empty {
+        padding: 1.5rem 1rem;
+        text-align: center;
+        font-size: var(--ds-text-sm);
+        color: var(--ds-color-text-subtle);
+      }
+      .match-item {
+        padding: 0.5rem 1rem;
+        font-size: var(--ds-text-sm);
+        color: var(--ds-color-text-body);
+      }
+      .answered-query {
+        margin-top: 0.5rem;
+        font-size: var(--ds-text-xs);
+        color: var(--ds-color-text-muted);
+      }
+    `,
+  ],
 })
 export class TaskSearch {
   // Stato "grezzo": cosa l'utente ha digitato in questo momento. Aggiornato

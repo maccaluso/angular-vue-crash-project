@@ -1,5 +1,5 @@
-<h2 class="text-xl font-semibold text-slate-900">Cerca (demo RxJS)</h2>
-<p class="mt-1 text-sm text-slate-500">
+<h2 class="page-title">Cerca (demo RxJS)</h2>
+<p class="hint">
   Prova a digitare velocemente "a" e poi subito "ab": la query più corta è
   volutamente più lenta di quella più lunga (vedi task-search.ts) — se
   <code>switchMap</code> funziona, il risultato finale corrisponde sempre
@@ -27,7 +27,7 @@
   [value]="query()"
   (input)="query.set($any($event.target).value)"
   placeholder="Cerca tra i task remoti finti..."
-  class="mt-4 block w-full max-w-sm rounded-md border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+  class="search-input"
 />
 
 <!-- isSearching è un signal scritto dai due tap() nella pipe RxJS
@@ -36,14 +36,14 @@
      flusso RxJS, letto qui come un signal qualsiasi — il template non
      sa né gli interessa che dietro ci sia un pipe RxJS. -->
 @if (isSearching()) {
-  <p class="mt-2 text-sm text-slate-400">Ricerca in corso...</p>
+  <p class="hint">Ricerca in corso...</p>
 }
 
 <!-- error è popolato solo dal catchError dentro switchMap (task-search.ts)
      — se catchError non ci fosse, questo ramo non servirebbe a nulla:
      l'intero stream morirebbe prima ancora di arrivare qui. -->
 @if (results().error) {
-  <p class="error mt-2 text-sm text-red-600">Errore: {{ results().error }}</p>
+  <p class="error">Errore: {{ results().error }}</p>
 }
 
 <!-- results() è il signal risultato finale del pipe (dopo toSignal()):
@@ -55,11 +55,11 @@
      davvero). track match: dato che i risultati sono semplici stringhe,
      tracciarle per il loro stesso valore basta — non serve un id
      dedicato come task.id altrove nel progetto. -->
-<ul class="mt-4 max-w-sm divide-y divide-slate-200 rounded-lg border border-slate-200 bg-white">
+<ul class="task-list">
   @for (match of results().matches; track match) {
-    <li class="px-4 py-2 text-sm text-slate-800">{{ match }}</li>
+    <li class="match-item">{{ match }}</li>
   } @empty {
-    <li class="px-4 py-6 text-center text-sm text-slate-500">Nessun risultato</li>
+    <li class="task-list__empty">Nessun risultato</li>
   }
 </ul>
 
@@ -70,6 +70,6 @@
      che abbiamo dimostrato che switchMap scarta le risposte tardive:
      leggendo questo testo a tempi prestabiliti e controllando che non
      "torni indietro" a una query precedente. -->
-<p class="mt-2 text-xs text-slate-400" data-testid="answered-query">
+<p class="answered-query" data-testid="answered-query">
   Risultato mostrato per la query: "{{ results().query }}"
 </p>

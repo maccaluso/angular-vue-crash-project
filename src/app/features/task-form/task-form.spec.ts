@@ -21,8 +21,11 @@ describe('TaskForm (Signal Forms)', () => {
     fixture.detectChanges();
     await fixture.whenStable();
 
+    // .shadowRoot invece di nativeElement diretto: vedi la nota in
+    // app.spec.ts — con ViewEncapsulation.ShadowDom serve sempre questo
+    // salto in più per raggiungere il contenuto del componente.
     const submitButton: HTMLButtonElement =
-      fixture.nativeElement.querySelector('button[type="submit"]');
+      fixture.nativeElement.shadowRoot!.querySelector('button[type="submit"]');
     expect(submitButton.disabled).toBe(true);
   });
 
@@ -38,7 +41,7 @@ describe('TaskForm (Signal Forms)', () => {
     // manualmente l'evento — senza dispatchEvent('input') Angular non si
     // accorgerebbe del cambio, perché non osserva .value, osserva
     // l'evento.
-    const input: HTMLInputElement = fixture.nativeElement.querySelector('#title');
+    const input: HTMLInputElement = fixture.nativeElement.shadowRoot!.querySelector('#title');
     input.value = 'ab'; // 2 caratteri: sotto il minimo di 3
     input.dispatchEvent(new Event('input'));
     input.dispatchEvent(new Event('blur')); // serve a marcare il campo "touched"
@@ -49,7 +52,7 @@ describe('TaskForm (Signal Forms)', () => {
     fixture.detectChanges();
     await fixture.whenStable();
 
-    const errorText = fixture.nativeElement.querySelector('.error')?.textContent;
+    const errorText = fixture.nativeElement.shadowRoot!.querySelector('.error')?.textContent;
     expect(errorText).toContain('almeno 3 caratteri');
   });
 
@@ -68,13 +71,13 @@ describe('TaskForm (Signal Forms)', () => {
     fixture.detectChanges();
     await fixture.whenStable();
 
-    const input: HTMLInputElement = fixture.nativeElement.querySelector('#title');
+    const input: HTMLInputElement = fixture.nativeElement.shadowRoot!.querySelector('#title');
     input.value = 'Comprare il latte';
     input.dispatchEvent(new Event('input'));
     fixture.detectChanges();
     await fixture.whenStable();
 
-    const form: HTMLFormElement = fixture.nativeElement.querySelector('form');
+    const form: HTMLFormElement = fixture.nativeElement.shadowRoot!.querySelector('form');
     form.dispatchEvent(new Event('submit'));
     fixture.detectChanges();
     await fixture.whenStable();

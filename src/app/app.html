@@ -1,64 +1,25 @@
-<header class="border-b border-slate-200 bg-white">
-  <div class="mx-auto max-w-2xl px-4 py-4">
-    <h1 class="text-2xl font-bold tracking-tight text-slate-900">{{ title }}</h1>
+<header class="app-header">
+  <div class="app-header__inner">
+    <h1 class="app-title">{{ title }}</h1>
     <!-- routerLink è l'equivalente di router-link in Vue Router.
          routerLinkActive aggiunge la classe indicata quando la rotta è
          attiva — equivalente ad active-class su router-link in Vue.
-
-         ATTENZIONE (bug reale trovato e corretto qui): routerLinkActive
-         AGGIUNGE la classe passata come stringa, non rimuove le altre.
-         Con "text-blue-600" (attiva) e "text-slate-500" (statica)
-         presenti insieme sullo stesso elemento, e stessa specificità CSS
-         tra due utility Tailwind, vince quella che compare più avanti
-         nel foglio generato — non necessariamente quella "attiva". Qui
-         era .text-slate-500, quindi il link restava sempre grigio.
-         Fix: usare #rla="routerLinkActive" (che espone .isActive) e due
-         [class.xxx] reciprocamente esclusivi, così sull'elemento è
-         presente SEMPRE una sola delle due classi colore, mai entrambe:
-         niente più ambiguità di cascata. -->
-    <nav class="mt-2 flex gap-4 text-sm font-medium">
-      <a
-        routerLink="/"
-        routerLinkActive
-        #rlaHome="routerLinkActive"
-        [routerLinkActiveOptions]="{ exact: true }"
-        class="transition-colors hover:text-slate-900"
-        [class.text-blue-600]="rlaHome.isActive"
-        [class.text-slate-500]="!rlaHome.isActive"
+         Con CSS nostro (non generato da un compilatore di utility) non
+         serve più il workaround visto con Tailwind: basta una singola
+         classe "is-active", perché controlliamo noi l'ordine delle
+         regole in shared.styles/app.ts. -->
+    <nav class="app-nav">
+      <a routerLink="/" routerLinkActive="is-active" [routerLinkActiveOptions]="{ exact: true }" class="nav-link"
         >Lista task</a
       >
-      <a
-        routerLink="/new"
-        routerLinkActive
-        #rlaNew="routerLinkActive"
-        class="transition-colors hover:text-slate-900"
-        [class.text-blue-600]="rlaNew.isActive"
-        [class.text-slate-500]="!rlaNew.isActive"
-        >Nuovo task</a
-      >
-      <a
-        routerLink="/login"
-        routerLinkActive
-        #rlaLogin="routerLinkActive"
-        class="transition-colors hover:text-slate-900"
-        [class.text-blue-600]="rlaLogin.isActive"
-        [class.text-slate-500]="!rlaLogin.isActive"
-        >Login</a
-      >
-      <a
-        routerLink="/search"
-        routerLinkActive
-        #rlaSearch="routerLinkActive"
-        class="transition-colors hover:text-slate-900"
-        [class.text-blue-600]="rlaSearch.isActive"
-        [class.text-slate-500]="!rlaSearch.isActive"
-        >Cerca (RxJS)</a
-      >
+      <a routerLink="/new" routerLinkActive="is-active" class="nav-link">Nuovo task</a>
+      <a routerLink="/login" routerLinkActive="is-active" class="nav-link">Login</a>
+      <a routerLink="/search" routerLinkActive="is-active" class="nav-link">Cerca (RxJS)</a>
     </nav>
   </div>
 </header>
 
-<main class="mx-auto max-w-2xl px-4 py-8">
+<main class="app-main">
   <!-- router-outlet: identico concettualmente a <router-view /> in Vue -->
   <router-outlet></router-outlet>
 </main>

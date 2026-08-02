@@ -3,13 +3,38 @@
 // non serve iniettare ActivatedRoute e fare route.snapshot.paramMap.get().
 // È l'equivalente diretto di come Vue Router passa i "props" di rotta
 // quando configuri { path: '/tasks/:id', props: true }.
-import { Component, computed, inject, input } from '@angular/core';
+import { Component, ViewEncapsulation, computed, inject, input } from '@angular/core';
 import { Router } from '@angular/router';
 import { TaskStore } from '../../core/task-store';
+import { sharedStyles } from '../../design-system/shared.styles';
 
 @Component({
   selector: 'app-task-detail',
   templateUrl: './task-detail.html',
+  encapsulation: ViewEncapsulation.ShadowDom,
+  styles: [
+    sharedStyles,
+    `
+      .detail-card {
+        border-radius: var(--ds-radius-lg);
+        border: 1px solid var(--ds-color-border);
+        background: var(--ds-color-surface);
+        padding: 1.5rem;
+      }
+      .status-badge {
+        font-weight: var(--ds-font-medium);
+        color: var(--ds-color-text-subtle);
+      }
+      .status-badge.is-done {
+        color: var(--ds-color-success);
+      }
+      .detail-card__actions {
+        margin-top: 1rem;
+        display: flex;
+        gap: 0.5rem;
+      }
+    `,
+  ],
 })
 export class TaskDetail {
   // Il valore arriva come stringa dall'URL: lo teniamo così e lo

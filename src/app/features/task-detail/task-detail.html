@@ -2,34 +2,21 @@
   <!-- "@if (expr; as t)" salva il risultato non-null in una variabile di
        template locale "t": evita di richiamare task() più volte e
        gestisce da solo il caso undefined. -->
-  <div class="rounded-lg border border-slate-200 bg-white p-6">
-    <h2 class="text-xl font-semibold text-slate-900">{{ t.title }}</h2>
-    <p class="mt-1 text-sm text-slate-500">
+  <div class="detail-card">
+    <h2 class="page-title">{{ t.title }}</h2>
+    <p class="summary">
       Stato:
-      <span
-        class="font-medium"
-        [class.text-emerald-600]="t.completed"
-        [class.text-slate-500]="!t.completed"
-        >{{ t.completed ? 'completato' : 'da fare' }}</span
-      >
+      <span class="status-badge" [class.is-done]="t.completed">{{
+        t.completed ? 'completato' : 'da fare'
+      }}</span>
     </p>
-    <div class="mt-4 flex gap-2">
-      <button
-        type="button"
-        (click)="toggle()"
-        class="rounded-md bg-slate-900 px-3 py-1.5 text-sm font-medium text-white transition-colors hover:bg-slate-700"
-      >
+    <div class="detail-card__actions">
+      <button type="button" (click)="toggle()" class="btn btn--primary">
         {{ t.completed ? 'Segna come da fare' : 'Segna come completato' }}
       </button>
-      <button
-        type="button"
-        (click)="remove()"
-        class="rounded-md border border-slate-200 px-3 py-1.5 text-sm font-medium text-slate-600 transition-colors hover:border-red-300 hover:bg-red-50 hover:text-red-600"
-      >
-        Elimina
-      </button>
+      <button type="button" (click)="remove()" class="btn btn--danger-ghost">Elimina</button>
     </div>
   </div>
 } @else {
-  <p class="text-sm text-slate-500">Task non trovato (id: {{ id() }}).</p>
+  <p class="hint">Task non trovato (id: {{ id() }}).</p>
 }

@@ -39,7 +39,13 @@ describe('App (componente radice)', () => {
     const fixture = TestBed.createComponent(App);
     fixture.detectChanges();
     await fixture.whenStable();
-    const heading = fixture.nativeElement.querySelector('h1');
+    // Con ViewEncapsulation.ShadowDom, fixture.nativeElement è l'host
+    // element: il suo contenuto vive dentro .shadowRoot, non come figli
+    // diretti raggiungibili da querySelector() sull'host stesso (querySelector
+    // non attraversa i confini reali dello Shadow DOM). Con Emulated
+    // (il default) questa riga sarebbe stata fixture.nativeElement.querySelector(...)
+    // diretto — qui serve un salto in più.
+    const heading = fixture.nativeElement.shadowRoot!.querySelector('h1');
     expect(heading?.textContent).toContain('Task Board');
   });
 });

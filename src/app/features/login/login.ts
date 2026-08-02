@@ -1,10 +1,13 @@
-import { Component, inject } from '@angular/core';
+import { Component, ViewEncapsulation, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../../core/auth.service';
+import { sharedStyles } from '../../design-system/shared.styles';
 
 @Component({
   selector: 'app-login',
   templateUrl: './login.html',
+  encapsulation: ViewEncapsulation.ShadowDom,
+  styles: [sharedStyles, `.btn { margin-top: 1rem; }`],
 })
 export class Login {
   // inject() al posto del constructor: funziona identico, ma si può usare

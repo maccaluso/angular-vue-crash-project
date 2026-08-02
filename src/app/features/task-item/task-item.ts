@@ -6,15 +6,56 @@
 //   suoi metodi. Se TaskItem fosse annidato 5 livelli più in profondità,
 //   non cambierebbe nulla: nessun componente intermedio dovrebbe
 //   conoscere l'esistenza di questo evento.
-import { Component, inject, input } from '@angular/core';
+import { Component, ViewEncapsulation, inject, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { Task } from '../../core/task.model';
 import { TaskStore } from '../../core/task-store';
+import { sharedStyles } from '../../design-system/shared.styles';
 
 @Component({
   selector: 'app-task-item',
   imports: [RouterLink],
   templateUrl: './task-item.html',
+  encapsulation: ViewEncapsulation.ShadowDom,
+  styles: [
+    sharedStyles,
+    `
+      .task-row {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.75rem 1rem;
+      }
+      .task-row.is-done {
+        opacity: 0.6;
+      }
+      .task-row__checkbox {
+        height: 1rem;
+        width: 1rem;
+        flex-shrink: 0;
+        border-radius: 0.25rem;
+        border: 1px solid var(--ds-color-border-strong);
+        accent-color: var(--ds-color-accent);
+      }
+      .task-row__link {
+        flex: 1;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        font-size: var(--ds-text-sm);
+        color: var(--ds-color-text-body);
+        text-decoration: none;
+      }
+      .task-row__link:hover {
+        color: var(--ds-color-accent);
+        text-decoration: underline;
+      }
+      .task-row__link.is-done {
+        text-decoration: line-through;
+        color: var(--ds-color-text-muted);
+      }
+    `,
+  ],
 })
 export class TaskItem {
   // input() sostituisce @Input(). required: true equivale a una prop
