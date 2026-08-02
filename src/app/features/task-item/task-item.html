@@ -1,0 +1,25 @@
+<!-- [class.xxx] è il binding di classe condizionale, identico nello
+     spirito a :class="{ xxx: cond }" in Vue. -->
+<div class="flex items-center gap-3 px-4 py-3" [class.opacity-60]="task().completed">
+  <input
+    type="checkbox"
+    [checked]="task().completed"
+    (change)="toggle()"
+    class="h-4 w-4 shrink-0 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+  />
+  <a
+    [routerLink]="['/tasks', task().id]"
+    class="flex-1 truncate text-sm text-slate-800 hover:text-blue-600 hover:underline"
+    [class.line-through]="task().completed"
+    [class.text-slate-400]="task().completed"
+  >
+    <span>{{ task().title }}</span>
+  </a>
+  <button
+    type="button"
+    (click)="remove()"
+    class="shrink-0 rounded-md border border-slate-200 px-2.5 py-1 text-xs font-medium text-slate-600 transition-colors hover:border-red-300 hover:bg-red-50 hover:text-red-600"
+  >
+    Elimina
+  </button>
+</div>

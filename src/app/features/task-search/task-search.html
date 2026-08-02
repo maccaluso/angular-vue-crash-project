@@ -1,0 +1,75 @@
+<h2 class="text-xl font-semibold text-slate-900">Cerca (demo RxJS)</h2>
+<p class="mt-1 text-sm text-slate-500">
+  Prova a digitare velocemente "a" e poi subito "ab": la query più corta è
+  volutamente più lenta di quella più lunga (vedi task-search.ts) — se
+  <code>switchMap</code> funziona, il risultato finale corrisponde sempre
+  all'ULTIMA query digitata, mai a una risposta lenta arrivata in ritardo.
+</p>
+
+<!-- [value] + (input) è un "two-way binding fatto a mano": leggiamo
+     query() per mostrare il valore corrente, scriviamo query.set(...)
+     a ogni digitazione. È l'equivalente esplicito di v-model in Vue,
+     che sotto il cofano fa esattamente questa stessa coppia
+     legame-in-lettura/legame-in-scrittura. Qui non usiamo [(ngModel)]
+     (il "v-model" storico di Angular, richiede FormsModule) né Signal
+     Forms (visto in task-form.ts) perché per un campo di ricerca senza
+     validazione sarebbe complessità in più senza benefici: un signal
+     semplice basta e avanza.
+
+     $any(...) è un cast SOLO di template: $event.target ha tipo
+     generico EventTarget (potrebbe essere qualsiasi elemento del DOM),
+     quindi TypeScript in modalità strictTemplates (vedi tsconfig.json)
+     rifiuterebbe .value perché EventTarget non garantisce quella
+     proprietà. $any() dice "fidati, qui è un input" — stesso spirito di
+     un cast "as any" nel .ts, ma con sintassi dedicata ai template. -->
+<input
+  type="text"
+  [value]="query()"
+  (input)="query.set($any($event.target).value)"
+  placeholder="Cerca tra i task remoti finti..."
+  class="mt-4 block w-full max-w-sm rounded-md border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+/>
+
+<!-- isSearching è un signal scritto dai due tap() nella pipe RxJS
+     (task-search.ts): true dal momento in cui switchMap parte, false
+     quando la ricerca (finta) risponde. Un effetto collaterale del
+     flusso RxJS, letto qui come un signal qualsiasi — il template non
+     sa né gli interessa che dietro ci sia un pipe RxJS. -->
+@if (isSearching()) {
+  <p class="mt-2 text-sm text-slate-400">Ricerca in corso...</p>
+}
+
+<!-- error è popolato solo dal catchError dentro switchMap (task-search.ts)
+     — se catchError non ci fosse, questo ramo non servirebbe a nulla:
+     l'intero stream morirebbe prima ancora di arrivare qui. -->
+@if (results().error) {
+  <p class="error mt-2 text-sm text-red-600">Errore: {{ results().error }}</p>
+}
+
+<!-- results() è il signal risultato finale del pipe (dopo toSignal()):
+     un oggetto { query, matches }, non un semplice array — per questo
+     leggiamo results().matches qui e results().query più sotto. Ogni
+     lettura richiama il signal, ma nella stessa passata di change
+     detection restituisce sempre lo stesso valore corrente (non rifà
+     il lavoro del pipe RxJS, quello succede solo quando query() cambia
+     davvero). track match: dato che i risultati sono semplici stringhe,
+     tracciarle per il loro stesso valore basta — non serve un id
+     dedicato come task.id altrove nel progetto. -->
+<ul class="mt-4 max-w-sm divide-y divide-slate-200 rounded-lg border border-slate-200 bg-white">
+  @for (match of results().matches; track match) {
+    <li class="px-4 py-2 text-sm text-slate-800">{{ match }}</li>
+  } @empty {
+    <li class="px-4 py-6 text-center text-sm text-slate-500">Nessun risultato</li>
+  }
+</ul>
+
+<!-- data-testid: non è una feature di Angular, è pura convenzione HTML
+     (un attributo qualsiasi) usata qui apposta per rendere verificabile
+     da uno script esterno (il nostro script CDP di verifica) QUALE
+     query ha prodotto il risultato mostrato in un dato istante — è così
+     che abbiamo dimostrato che switchMap scarta le risposte tardive:
+     leggendo questo testo a tempi prestabiliti e controllando che non
+     "torni indietro" a una query precedente. -->
+<p class="mt-2 text-xs text-slate-400" data-testid="answered-query">
+  Risultato mostrato per la query: "{{ results().query }}"
+</p>

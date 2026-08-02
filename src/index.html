@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="it">
+  <head>
+    <meta charset="utf-8" />
+    <title>Task Board — Angular per sviluppatori Vue</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- Senza <base href="/"> gli URL relativi (script/link, ma anche il
+         routing) si risolvono rispetto al path corrente: su un deep-link
+         diretto come /tasks/1, "styles.css" diventerebbe
+         /tasks/styles.css (404, pagina bianca). Il CLI di Angular la
+         genera sempre di default — qui mancava. -->
+    <base href="/" />
+  </head>
+  <body>
+    <!--
+      app-root è il selettore del componente radice (vedi app.ts).
+      Angular lo sostituisce con l'albero dei componenti a runtime,
+      esattamente come <div id="app"> in un progetto Vue con Vite.
+    -->
+    <app-root></app-root>
+  </body>
+</html>

@@ -1,0 +1,29 @@
+<h2 class="text-xl font-semibold text-slate-900">Lista task</h2>
+
+<p class="mt-1 text-sm text-slate-500">
+  Completati:
+  <span class="font-medium text-slate-700">{{ store.completedCount() }}</span>
+  / {{ store.totalCount() }}
+  <!-- Questi due numeri sono computed() nello store: si aggiornano da
+       soli, senza che questo componente debba fare nulla di esplicito. -->
+</p>
+
+<!-- Tre stati gestiti esplicitamente con @if/@else if/@else: loading,
+     errore, e dati pronti. Nessun operatore RxJS coinvolto. -->
+@if (remoteTasks.isLoading()) {
+  <p class="mt-4 text-sm text-slate-500">Caricamento dei task iniziali da JSONPlaceholder...</p>
+} @else if (remoteTasks.error()) {
+  <p class="error mt-4 text-sm text-red-600">Errore nel caricamento: {{ remoteTasks.error() }}</p>
+}
+
+<!-- @for richiede sempre "track": qui usiamo l'id, la chiave naturale,
+     esattamente come faresti con :key="task.id" in un v-for di Vue. -->
+<ul class="mt-4 divide-y divide-slate-200 rounded-lg border border-slate-200 bg-white">
+  @for (task of store.tasks(); track task.id) {
+    <li><app-task-item [task]="task" /></li>
+  } @empty {
+    <li class="px-4 py-6 text-center text-sm text-slate-500">
+      Nessun task ancora. Aggiungine uno dalla pagina "Nuovo task".
+    </li>
+  }
+</ul>

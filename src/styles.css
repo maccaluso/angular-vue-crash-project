@@ -1,0 +1,8 @@
+@import "tailwindcss";
+
+/* Reset minimale + font di base: il resto dello stile passa dalle
+   utility Tailwind direttamente nei template. */
+body {
+  @apply bg-slate-50 text-slate-800 antialiased;
+  font-family: system-ui, -apple-system, sans-serif;
+}
