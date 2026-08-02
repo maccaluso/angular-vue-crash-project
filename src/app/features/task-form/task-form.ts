@@ -109,6 +109,22 @@ export class TaskForm {
     }
 
     this.store.add(this.model().title);
+    // Resetta il modello DOPO l'aggiunta: se non lo facessimo,
+    // hasUnsavedChanges() qui sotto continuerebbe a vedere il titolo appena
+    // inviato come "non salvato", e canDeactivateTaskForm bloccherebbe con
+    // una conferma anche QUESTA navigazione, quella legittima post-submit.
+    this.model.set({ title: '' });
     this.router.navigateByUrl('/');
+  }
+
+  // PUBLIC (non protected come store/router sopra, non protected come
+  // model/taskForm): a differenza dei campi letti solo dal template
+  // (dove "protected" basta, vedi login.ts per il perché), questo metodo
+  // viene chiamato da FUORI la classe — da canDeactivateTaskForm in
+  // can-deactivate.guard.ts, un file completamente diverso. "protected"
+  // non sarebbe sufficiente: è accessibile solo dentro la classe e le
+  // sue sottoclassi, non da una funzione esterna qualsiasi.
+  hasUnsavedChanges(): boolean {
+    return this.model().title.trim().length > 0;
   }
 }
