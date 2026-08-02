@@ -3,7 +3,12 @@
 // Qui non esiste una classe AppModule: i provider si passano direttamente
 // a bootstrapApplication() tramite questo oggetto ApplicationConfig.
 import { ApplicationConfig, provideZonelessChangeDetection } from '@angular/core';
-import { provideRouter, withComponentInputBinding } from '@angular/router';
+import {
+  provideRouter,
+  withComponentInputBinding,
+  withPreloading,
+  PreloadAllModules,
+} from '@angular/router';
 import { provideHttpClient } from '@angular/common/http';
 import { routes } from './app.routes';
 
@@ -25,7 +30,19 @@ export const appConfig: ApplicationConfig = {
     // inject(ActivatedRoute) + route.snapshot.paramMap.get('id').
     // Equivalente Vue Router: { path: '/tasks/:id', props: true } nella
     // config della rotta — anche lì va abilitato esplicitamente.
-    provideRouter(routes, withComponentInputBinding()),
+    //
+    // withPreloading(PreloadAllModules): compromesso tra "bundle
+    // iniziale piccolo" (grazie a loadComponent, vedi app.routes.ts) e
+    // "navigazione istantanea" (senza preloading, il PRIMO click su una
+    // rotta lazy dovrebbe comunque aspettare il download del chunk).
+    // Con questa strategia, Angular scarica in background TUTTI i chunk
+    // lazy subito dopo il caricamento iniziale — non li usa ancora, li
+    // pre-scarica e basta, così quando l'utente clicca il chunk è già
+    // in cache del browser. PreloadAllModules è la strategia built-in
+    // più semplice; se ne può scrivere una custom (implementando
+    // PreloadingStrategy) per essere più selettivi, es. precaricare
+    // solo le rotte marcate con { data: { preload: true } }.
+    provideRouter(routes, withComponentInputBinding(), withPreloading(PreloadAllModules)),
     provideHttpClient(),
   ],
 };
